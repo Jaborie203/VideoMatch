@@ -109,7 +109,7 @@ if __name__ == '__main__':
 
     transforms = transforms.Compose([tr.RandomHorizontalFlip(), tr.ToTensor()])
 
-    dataset = DAVIS_OVER_FIT_TEST1(db_root_dir='../../../DAVIS-2016',
+    dataset = DAVIS_OVER_FIT_TEST2(db_root_dir='../../../DAVIS-2016',
                         train=True, transform=transforms)
     dataloader = torch.utils.data.DataLoader(dataset, batch_size=1, shuffle=True, num_workers=1)
 
