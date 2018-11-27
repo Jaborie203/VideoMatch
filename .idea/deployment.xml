@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" autoUpload="Always" serverName="root@node19:22185">
+    <serverData>
+      <paths name="root@node03:22185">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/root/PycharmProjects/VideoMatch" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="root@node05:22185">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/root/PycharmProjects/VideoMatch" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="root@node19:22185">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/root/PycharmProjects/VideoMatch" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+    <option name="myAutoUpload" value="ALWAYS" />
+  </component>
+</project>
