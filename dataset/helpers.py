@@ -9,7 +9,10 @@ def tens2image(im):
     if tmp.ndim == 2:
         return tmp
     else:
-        return tmp.transpose((1, 2, 0))
+        tmp = tmp.transpose((1, 2, 0))
+        tmp = cv2.cvtColor(tmp, cv2.COLOR_BGR2RGB)
+        return tmp
+
 
 
 def overlay_mask(im, ma, color=np.array([255, 0, 0])/255.0):

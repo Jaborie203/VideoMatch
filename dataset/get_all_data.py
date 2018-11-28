@@ -14,8 +14,7 @@ class DAVIS2016(Dataset):
                  db_root_dir='../../../DAVIS-2016',
                  meanval=(104.00699, 116.66877, 122.67892),
                  transform=None,
-                 seq_name=None,
-                 val_index=None):
+                 seq_name=None):
         """Loads image to label pairs for tool pose estimation
         db_root_dir: dataset directory with subfolders "JPEGImages" and "Annotations"
         inputRes:inputResize scalar?
@@ -25,7 +24,6 @@ class DAVIS2016(Dataset):
         self.meanval = meanval
         self.transform = transform
         self.seq_name = seq_name
-        self.val_index = val_index
         if self.train:
             fname = 'train_seqs'
         else:
@@ -52,16 +50,12 @@ class DAVIS2016(Dataset):
                 labels = [labels[0]]
         assert (len(labels) == len(img_list))
 
-
-
         self.img_list = img_list
         self.labels = labels
 
         print('Done initializing ' + fname + ' Dataset')
 
     def __len__(self):
-        if self.val_index is not None and self.train == False:
-            return len(self.img_list[self.val_index])
         return len(self.img_list)
 
     def __getitem__(self, idx):
@@ -78,20 +72,16 @@ class DAVIS2016(Dataset):
         """
         Make the image-ground-truth pair
         """
-
+        l = len(self.img_list[idx])
         if self.train:
-            l = len(self.img_list[idx])
             idx_list = np.random.choice(l, 2, replace=False)
-            img_1 = cv2.imread(os.path.join(self.db_root_dir, self.img_list[idx][idx_list[0]]))
-            img_t = cv2.imread(os.path.join(self.db_root_dir, self.img_list[idx][idx_list[1]]))
-            label_1 = cv2.imread(os.path.join(self.db_root_dir, self.labels[idx][idx_list[0]]), 0)
-            label_t = cv2.imread(os.path.join(self.db_root_dir, self.labels[idx][idx_list[1]]), 0)
         else:
-            img_1 = cv2.imread(os.path.join(self.db_root_dir, self.img_list[self.val_index][0]))
-            img_t = cv2.imread(os.path.join(self.db_root_dir, self.img_list[self.val_index][idx]))
-            label_1 = cv2.imread(os.path.join(self.db_root_dir, self.labels[self.val_index][0]), 0)
-            label_t = cv2.imread(os.path.join(self.db_root_dir, self.labels[self.val_index][idx]), 0)
-
+            idx_list = np.random.choice(l, 2, replace=False)
+            idx_list[0]=0
+        img_1 = cv2.imread(os.path.join(self.db_root_dir, self.img_list[idx][idx_list[0]]))
+        img_t = cv2.imread(os.path.join(self.db_root_dir, self.img_list[idx][idx_list[1]]))
+        label_1 = cv2.imread(os.path.join(self.db_root_dir, self.labels[idx][idx_list[0]]), 0)
+        label_t = cv2.imread(os.path.join(self.db_root_dir, self.labels[idx][idx_list[1]]), 0)
         #img->array
         img_1 = np.array(img_1, dtype=np.float32)
         img_1 = (img_1 - img_1.min())/(img_1.max() - img_1.min())

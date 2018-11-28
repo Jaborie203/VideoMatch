@@ -1,17 +1,18 @@
 import torch as t
 from torch import nn
 # from matplotlib import pyplot as plt
-from dataset.helpers import *
+# from dataset.helpers import *
 import numpy as np
 from utils.visualize import Visualizer
-import visdom
+# import visdom
+# from utils.visualize import Visualizer
 class MyFrame():
     def __init__(self, net, loss, K):
         self.net = net
         self.loss = loss
         self.downsample = nn.MaxPool2d(kernel_size=(8,8), padding=1)
         self.K = K
-        # self.vis = visdom.Visdom(env='overfit_test', server='http://10.10.10.100', port='31851')
+        # self.vis = Visualizer(env='VideoMatch')
 
     def set_data(self,img_1, img_t, gt_1, gt_t):
         '''
@@ -51,19 +52,12 @@ class MyFrame():
         S = t.cat((S2, S1), dim=1)
         pred = t.argmax(nn.functional.softmax(S, dim=1), dim=1)
 
-        # plt.subplot(1, 2, 1)
-        # plt.imshow(tens2image(pred.cpu()))
-        # plt.subplot(1,2,2)
-        # plt.imshow(tens2image(self.gt_t.cpu()))
-        # plt.show(block=True)
-        # plt.imshow(tens2image(self.img_t.cpu()))
 
-        # plt.imshow(overlay_mask(im_normalize(tens2image(self.img_t.cpu())), tens2image(pred.cpu())))
-        # plt.show(block=True)
+        # self.vis.img(name='VideoMatch', img_=overlay_mask(im_normalize(tens2image(self.img_t.cpu())), tens2image(pred.cpu())).transpose(2,0,1))
         loss_out = self.loss(S, self.gt_t.squeeze(1).long())
         IoU = self.compute_IoU(pred.float().squeeze(), self.gt_t.squeeze())
 
-        return loss_out, IoU
+        return loss_out, IoU, pred
 
     def soft_match(self, m, x, k):
         '''
@@ -94,7 +88,9 @@ class MyFrame():
         print(m.shape,m.sum())
         '''
         A = t.mm(x, m)
-        A, _ = t.topk(A, k, dim=1)
+        m_abs = m.shape[1]
+        k_adjust = min(k, m_abs)
+        A, _ = t.topk(A, k_adjust, dim=1)
         A = t.mean(A, dim=1, keepdim = True)
         S = A.view(1, 1, h, w)
         return S
@@ -103,7 +99,9 @@ class MyFrame():
         intersection = (pred*groundtruth).sum()
         union = pred.sum() + groundtruth.sum() - intersection
         return intersection/union
-
+    def save_net(self, model_name='best_model.pth'):
+        model_save_path = '/root/PycharmProjects/VideoMatch/checkpoint/' + model_name
+        t.save(self.net.state_dict(), model_save_path)
 
 
 

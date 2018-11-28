@@ -59,7 +59,7 @@ class Visualizer(object):
 
         ！！！don‘t ~~self.img('input_imgs',t.Tensor(100,64,64),nrows=10)~~！！！
         """
-        self.vis.images(img_.cpu().numpy(),
+        self.vis.images(img_,
                         win=name,
                         opts=dict(title=name),
                         **kwargs

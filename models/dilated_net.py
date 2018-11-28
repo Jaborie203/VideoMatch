@@ -2,9 +2,10 @@ import torch
 from torch import nn
 from models.dilated_resnet import resnet101
 class Dilated_Net(nn.Module):
-    def __init__(self):
+    def __init__(self, pretrained=True):
         super(Dilated_Net, self).__init__()
-        model = resnet101(pretrained=True)
+        self.pretrained = pretrained
+        model = resnet101(pretrained=self.pretrained)
         self.conv1 = model.conv1
         self.bn1 = model.bn1
         self.relu = model.relu
@@ -23,8 +24,7 @@ class Dilated_Net(nn.Module):
         x = self.layer3(x)
         x = self.layer4(x)
         return x
-if __name__ == '__main__':
-    net = Net()
-    x = torch.randn(13,3,854,480)
-    y = net(x)
-    print(y.shape)
+if __name__=='__main__':
+    net = Dilated_Net(False)
+    net.load_state_dict(torch.load("/root/PycharmProjects/VideoMatch/checkpoint/train.pth"), strict=False)
+    print(net.state_dict())

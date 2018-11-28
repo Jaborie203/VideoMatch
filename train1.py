@@ -46,6 +46,7 @@ dataset = DAVIS_OVER_FIT_TEST1(db_root_dir='/root/DAVIS-2016',
 dataloader = DataLoader(dataset, batch_size=1, shuffle=True, num_workers=1)
 loss_meter = meter.AverageValueMeter()
 iou_meter = meter.AverageValueMeter()
+max_iou = 0
 for i in range(1000):
     loss_meter.reset()
     iou_meter.reset()
@@ -72,4 +73,7 @@ for i in range(1000):
 
     with torch.no_grad():
         loss_val, iou_val = evaluation(frame)
+    if max_iou < iou_val:
+        max_iou = iou_val
+        frame.save_net('train1.pth')
     print("evaluation, loss: {}, IoU: {}".format(loss_val, iou_val))
